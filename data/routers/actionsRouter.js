@@ -1,8 +1,10 @@
 const express = require('express');
 const actions = require('../helpers/actionModel');
+const { validateActionId, validateAction } = require('../middleware');
 
 const router = express.Router();
 
+// Get all actions
 router.get('/', (req, res) => {
   actions
     .get()
@@ -16,23 +18,12 @@ router.get('/', (req, res) => {
     });
 });
 
+// Get action
 router.get('/:id', validateActionId, (req, res) => {
   res.status(200).json(req.action);
 });
 
-router.put('/:id', [validateActionId, validateAction], (req, res) => {
-  actions
-    .update(req.params.id, req.body)
-    .then(actionToUpdate => {
-      res.status(200).json(actionToUpdate);
-    })
-    .catch(err => {
-      res.status(500).json({
-        message: 'your request could not be processed ' + err.message
-      });
-    });
-});
-
+// Delete action
 router.delete('/:id', validateActionId, (req, res) => {
   actions
     .remove(req.params.id)
@@ -46,32 +37,18 @@ router.delete('/:id', validateActionId, (req, res) => {
     });
 });
 
-function validateAction(req, res, next) {
-  if (!Object.keys(req.body).length) {
-    res.status(400).json({ message: 'Missing action data' });
-  } else if (!req.body.name || !req.body.description) {
-    res.status(400).json({ message: 'Name and description are required!' });
-  } else {
-    next();
-  }
-}
-
-function validateActionId(req, res, next) {
+// Update action
+router.put('/:id', [validateActionId, validateAction], (req, res) => {
   actions
-    .get(req.params.id)
-    .then(action => {
-      if (!action) {
-        res.status(404).json({ message: 'Action does not exist.' });
-      } else {
-        req.action = action;
-        next();
-      }
+    .update(req.params.id, req.body)
+    .then(actionToUpdate => {
+      res.status(200).json(actionToUpdate);
     })
     .catch(err => {
       res.status(500).json({
-        message: 'Your reques could not be processed: ' + err.message
+        message: 'your request could not be processed ' + err.message
       });
     });
-}
+});
 
 module.exports = router;
