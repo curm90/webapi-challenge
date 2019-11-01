@@ -14,7 +14,7 @@ function validateProjectId(req, res, next) {
     })
     .catch(err => {
       res.status(500).json({
-        message: 'Your reques could not be processed: ' + err.message
+        message: 'Your request could not be processed: ' + err.message
       });
     });
 }
@@ -32,7 +32,7 @@ function validateActionId(req, res, next) {
     })
     .catch(err => {
       res.status(500).json({
-        message: 'Your reques could not be processed: ' + err.message
+        message: 'Your request could not be processed: ' + err.message
       });
     });
 }
